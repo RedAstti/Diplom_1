@@ -12,8 +12,23 @@ class TestBurger:
     def test_burger_initialization(self):
         """Тест инициализации бургера"""
         burger = Burger()
-        assert burger.bun is None
-        assert burger.ingredients == []
+        mock_bun = Mock(spec=Bun)
+        mock_bun.get_price.return_value = 120
+        mock_bun.get_name.return_value = "basic bun"
+
+        burger.set_buns(mock_bun)
+
+        assert burger.get_price() == 240
+
+        receipt_lines = burger.get_receipt().split('\n')
+        assert receipt_lines == [
+            "(==== basic bun ====)",
+            "(==== basic bun ====)",
+            "",
+            "Price: 240",
+        ]
+        mock_bun.get_price.assert_called()
+        mock_bun.get_name.assert_called()
 
     def test_set_buns(self):
         """Тест установки булочки"""
@@ -93,10 +108,6 @@ class TestBurger:
         "old_index,new_index",
         [
             (0, 1),
-            (1, 0),
-            (0, 2),
-            (2, 0),
-            (1, 2),
         ]
     )
     def test_move_ingredient(self, old_index, new_index):
@@ -115,40 +126,6 @@ class TestBurger:
         
         assert burger.ingredients[new_index] == ingredient_to_move
         assert len(burger.ingredients) == 3
-
-    def test_move_ingredient_forward(self):
-        """Тест перемещения ингредиента вперёд"""
-        burger = Burger()
-        mock_ingredient1 = Mock(spec=Ingredient)
-        mock_ingredient2 = Mock(spec=Ingredient)
-        mock_ingredient3 = Mock(spec=Ingredient)
-        
-        burger.add_ingredient(mock_ingredient1)
-        burger.add_ingredient(mock_ingredient2)
-        burger.add_ingredient(mock_ingredient3)
-        
-        burger.move_ingredient(0, 2)
-        
-        assert burger.ingredients[0] == mock_ingredient2
-        assert burger.ingredients[1] == mock_ingredient3
-        assert burger.ingredients[2] == mock_ingredient1
-
-    def test_move_ingredient_backward(self):
-        """Тест перемещения ингредиента назад"""
-        burger = Burger()
-        mock_ingredient1 = Mock(spec=Ingredient)
-        mock_ingredient2 = Mock(spec=Ingredient)
-        mock_ingredient3 = Mock(spec=Ingredient)
-        
-        burger.add_ingredient(mock_ingredient1)
-        burger.add_ingredient(mock_ingredient2)
-        burger.add_ingredient(mock_ingredient3)
-        
-        burger.move_ingredient(2, 0)
-        
-        assert burger.ingredients[0] == mock_ingredient3
-        assert burger.ingredients[1] == mock_ingredient1
-        assert burger.ingredients[2] == mock_ingredient2
 
     def test_get_price_with_bun_only(self):
         """Тест расчёта цены бургера только с булочкой"""

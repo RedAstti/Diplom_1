@@ -20,25 +20,17 @@ class TestBun:
         assert bun.name == name
         assert bun.price == price
 
-    def test_get_name(self):
-        """Тест получения названия булочки"""
-        bun = Bun("test bun", 150)
-        assert bun.get_name() == "test bun"
-
-    def test_get_price(self):
-        """Тест получения цены булочки"""
-        bun = Bun("test bun", 150)
-        assert bun.get_price() == 150
-
     @pytest.mark.parametrize(
         "name,price",
         [
-            ("краторная булка N-200i", 1255),
-            ("Флюоресцентная булка R2-D3", 988),
+            ("classic bun", 0),
+            ("Булочка №42", 999.99),
+            ("Bun-π_special_123", 150),
+            ("スペース bun!", 75.5),
         ]
     )
-    def test_bun_get_methods(self, name, price):
-        """Тест методов get_name и get_price с параметризацией"""
+    def test_bun_get_methods_equivalence_classes(self, name, price):
+        """Тест методов get_name и get_price для разных классов значений"""
         bun = Bun(name, price)
         assert bun.get_name() == name
         assert bun.get_price() == price
